@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Response
-import sv.edu.bitlab.pupusapprv.ModeloDeDatos.ModeloDeDatos
+import sv.edu.bitlab.pupusapprv.ModeloDeDatos.OrdenTomada
 import sv.edu.bitlab.pupusapprv.Network.ApiService
 import javax.security.auth.callback.Callback
 
