@@ -16,16 +16,33 @@ import retrofit2.Call
 import retrofit2.Response
 import sv.edu.bitlab.pupusapprv.ModeloDeDatos.OrdenTomada
 import sv.edu.bitlab.pupusapprv.Network.ApiService
+import sv.edu.bitlab.pupusapprv.RecyclerViewRelleno.RellenoViewHolder
+import sv.edu.bitlab.pupusapprv.RecyclerViewRelleno.RellenosListAdapter
 import javax.security.auth.callback.Callback
 
-class MainActivity : AppCompatActivity(), RellenoViewHolder.RellenoViewHolderListener, RellenoFragmentDiaglog.OnRellenoFragmentInteraction {
+class MainActivity : AppCompatActivity(),
+    RellenoViewHolder.RellenoViewHolderListener,
+    RellenoFragmentDialog.OnRellenoFragmentInteraction {
 
-    var rellenos = arrayListOf<Relleno>()
-    var rellenosList: RecyclerView? = null
+
+    override fun onCounterButtonClick(relleno: String, masa: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onMaizClick(relleno: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onArrozClick(relleno: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    var rellenos = arrayListOf<sv.edu.bitlab.pupusapprv.ModeloDeDatos.Relleno>()
+    private lateinit var rellenosList: RecyclerView
 
 
     override fun onButtonClicked(relleno: String){
-        rellenos.add(Relleno(relleno, -1))
+        rellenos.add(sv.edu.bitlab.pupusapprv.ModeloDeDatos.Relleno(relleno, -1))
         val adapter = rellenosList.adapter as RellenosListAdapter
         adapter.notifyDataSetChanged()
     }
@@ -33,13 +50,15 @@ class MainActivity : AppCompatActivity(), RellenoViewHolder.RellenoViewHolderLis
     val orden = OrdenTomada()
 
     val pupusaStringResources = hashMapOf(
-        QUESO to "Queso: %1$s",
-        FRIJOLES to "Frijol con queso: %1$s",
-        REVUELTAS to "Revueltas: %1$s"
+        QUESO to R.string.pupusa_queso,
+        FRIJOLES to R.string.frijol_con_queso,
+        REVUELTAS to R.string.revueltas
     )
 
     var botonesMaiz = hashMapOf<String, Button>()
     var botonesArroz = hashMapOf<String, Button>()
+
+    var loadingContainer: View? = null
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -90,17 +109,17 @@ class MainActivity : AppCompatActivity(), RellenoViewHolder.RellenoViewHolderLis
 
         val orden = OrdenTomada()
         val loadingContainer = findViewById<View>(R.id.loadingContainer)
-        rellenosList = findViewById(R.id.rellenosList)
-        rellenosList?.layoutManager = LinearLayoutManager(this)
-        rellenosList?.adapter = RellenosListAdapter(
-            arrayListOf<Relleno>(),
+        rellenosList = findViewById(R.id.rv_listaDeBotones)
+        rellenosList.layoutManager = LinearLayoutManager(this)
+        rellenosList.adapter = RellenosListAdapter(
+            arrayListOf<sv.edu.bitlab.pupusapprv.ModeloDeDatos.Relleno>(),
             listener = this
         )
         loadingContainer.visibility = View.VISIBLE
 
         //Dialog error en caso hay error
 
-        ApiService.create().getRellenos().enqueue(object : Callback<List<Relleno>>{
+        ApiService.create().getRellenos().enqueue(object : retrofit2.Callback<List<Relleno>> {
             override fun onFailure(call: Call<List<Relleno>>, t: Throwable) {
                 loadingContainer.visibility = View.GONE
                 AlertDialog.Builder(getContent())
@@ -117,27 +136,27 @@ class MainActivity : AppCompatActivity(), RellenoViewHolder.RellenoViewHolderLis
                 response: Response<List<Relleno>>
             ) {
                 loadingContainer.visibility = View.GONE
-                rellenos = response.body()!! as ArrayList<Relleno>
+                rellenos = response.body()!! as ArrayList<sv.edu.bitlab.pupusapprv.ModeloDeDatos.Relleno>
                 val adapter = rellenosList?.adapter as RellenosListAdapter
                 adapter.rellenos = rellenos
                 adapter.notifyDataSetChanged()
             }
         })
 
-        setSupportActionBar(findViewById(R.id.mainToolbar))
+        //setSupportActionBar(findViewById(R.id.mainToolbar))
     }
 
     fun  getContent(): Context {
         return this
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+/*    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
         return true
-    }
+    }*/
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+/*    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.historial -> {
                 val intent = Intent(this, HistoryActivity::class.java)
@@ -153,7 +172,7 @@ class MainActivity : AppCompatActivity(), RellenoViewHolder.RellenoViewHolderLis
             }
         }
         return super.onOptionsItemSelected(item)
-    }
+    }*/
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         super.onSaveInstanceState(outState, outPersistentState)

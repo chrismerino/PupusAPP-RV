@@ -11,8 +11,8 @@ class RellenoViewHolder (itemViem: View, val listener: RellenoViewHolderListener
     private lateinit var arrozButton : Button
 
     fun bindData (relleno: Relleno){
-        maizButton = itemView.findViewById(R.id.botonMaiz)
-        arrozButton = itemView.findViewById(R.id.botonArroz)
+        //maizButton = itemView.findViewById(R.id.botonMaiz)
+        //arrozButton = itemView.findViewById(R.id.botonArroz)
 
         maizButton.text = relleno.nombre
         arrozButton.text = relleno.nombre
